@@ -104,6 +104,16 @@ Because each deployment is **defined by a simple JSON file**, you can:
 
 ---
 
+## 🧠 Project Background
+
+This repository is part of a broader open-source architecture I’ve developed to support configuration-driven AWS deployment.
+
+While some of these ideas were shaped through years of professional experience and refinement, the implementations here are entirely original — built independently and outside the context of any prior employment.
+
+For the full context and design principles behind this system, see the [aws-deployment-guide](https://github.com/tstrall/aws-deployment-guide).
+
+---
+
 ## **📌 Next Steps**
 Want to implement this in your AWS environment? Here’s what to do next:  
 1️⃣ **Fork this repo and define your own configurations.**  
