@@ -1,0 +1,10 @@
+{
+    "name": "dev",
+    "config_repo": "https://github.com/tstrall/aws-config.git",
+    "config_branch": "dev",
+    "iac_repo": "https://github.com/tstrall/aws-iac.git",
+    "iac_strict": "true",
+    "lambda_repo": "https://github.com/tstrall/aws-lambda.git",
+    "lambda_strict": "false"
+  }
+  

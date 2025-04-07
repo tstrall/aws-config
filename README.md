@@ -1,128 +1,129 @@
-# AWS Configuration Repository 📁  
+# aws-config
 
-## **Overview**  
-This repository serves as the **source of truth for AWS deployments**, containing JSON-based configurations that define **what gets deployed**.  
-- **No manual Terraform changes required** – deployments are controlled purely via config updates.  
-- **Ensures full auditability** – every deployment is tied to Git commits, making changes transparent.  
-- **Prevents unauthorized deployments** – if it’s not in this repo, Terraform won’t deploy it.  
-- **Syncs to AWS Parameter Store** – allowing infrastructure components to dynamically discover their configurations.  
+This is the only part of the **AWS deployment framework designed to be forked and modified.**  
+**You control it, and your fork does not need to be public.**
 
----
+This repository contains the configuration that defines how each AWS account in your organization is bound to its environment (e.g., `dev`, `prod`) and what may be deployed there.
 
-## **📂 Repository Structure**
+It works together with:
+- [`aws-deployment-guide`](https://github.com/tstrall/aws-deployment-guide) for orchestration and walkthroughs
+- [`aws-iac`](https://github.com/tstrall/aws-iac) for shared Terraform-based infrastructure components
+- [`aws-lambda`](https://github.com/tstrall/aws-lambda) for optional Lambda handlers and tools
+
+Each AWS account is explicitly bound to one environment by setting a single JSON parameter in AWS Systems Manager: `/aws-config/environment`. All other configuration is defined declaratively under this repo and selected at runtime based on that binding.
+
+## Repository Structure
+
 ```
-aws-config/
-│── dev/
-│   │── vpc/
-│   │   ├── main-vpc.json          # Defines main VPC configuration
-│   │── aurora-postgres/
-│   │   ├── main-db-A.json         # Defines primary Aurora DB for feature development A
-│   │   ├── main-db-B.json         # Defines primary Aurora DB for feature development B
-│   │   ├── main-db-C.json         # Defines primary Aurora DB for feature development C
-│── prod/
-│   │── vpc/
-│   │   ├── main-vpc.json          # Defines main VPC configuration
-│   │── aurora-postgres/
-│   │   ├── main-db.json           # Defines primary Aurora DB
-│── README.md
+.
+├── account_environments/
+│   ├── dev.json           # Defines the environment binding for the 'dev' OU
+│   └── prod.json          # Defines the environment binding for the 'prod' OU
+├── aws-config/
+│   ├── dev/
+│   │   └── serverless-site/
+│   │       └── strall-com/
+│   │           └── config.json
+│   ├── prod/
+│   │   └── ...
+├── scripts/
+│   ├── define_account_environment.py
+│   ├── deploy_config.py
+│   ├── validate_account_environment.py
+│   └── validate_config.py
 ```
 
----
+## Environment Setup
 
-## **🚀 How It Works**
-### **1️⃣ Configurations Define What Gets Deployed**
-- Each AWS environment (dev, qa, prod) **has its own directory**.
-- Each AWS component (VPC, RDS, Lambda) **has its own directory**.
-- Each JSON file **defines a specific deployment instance**.
-- Example: If `main-vpc.json` exists in `/vpc/`, it means **a VPC named "main-vpc" is deployable**.
+Each AWS account must define its environment binding before any configuration can be deployed. This is done by setting the `/aws-config/environment` parameter in Systems Manager Parameter Store.
 
----
+Each file in `account_environments/` corresponds to an Organizational Unit (OU) and defines how accounts within that OU should be configured and constrained.
 
-### **2️⃣ Terraform Reads Configurations from AWS Parameter Store**
-Before deploying, Terraform checks if a **config entry exists** in AWS Parameter Store.  
-For example, when deploying a VPC named `"main-vpc"`, Terraform validates:
+### Manual Setup
+
+1. Open the appropriate file:
+   - `account_environments/dev.json`
+   - `account_environments/prod.json`
+
+2. In the AWS Console for the target account:
+   - Go to Systems Manager → Parameter Store → Create parameter
+   - Name: `/aws-config/environment`
+   - Type: `String`
+   - Value: Paste the full JSON blob from the file
+
+This must be completed before deployment or validation can occur.
+
+### Scripted Setup
+
+To define the environment parameter from the CLI and ensure it is properly protected:
+
+```bash
+python3 scripts/define_account_environment.py --env dev
 ```
-/aws/vpc/main-vpc/config   ✅ (Required for deployment)
-/aws/vpc/main-vpc/runtime  ⏳ (Created after deployment)
+
+- Loads from `account_environments/dev.json`
+- Writes to `/aws-config/environment` in the target AWS account
+- Automatically applies a restrictive IAM policy to prevent unauthorized changes
+
+Only the designated administrative role (e.g. `OrgAdmin`) will be allowed to modify or delete the parameter. All other roles, including account root, will be denied.
+
+## Deploying a Config Instance
+
+Once an environment is defined, you may deploy a configuration instance by referencing its logical path under the environment tree.
+
+```bash
+python3 scripts/deploy_config.py --config serverless-site/strall-com
 ```
-If the **config is missing, Terraform will fail**, ensuring only pre-approved infrastructure gets deployed.
 
----
+- Resolves the current environment and repo via `/aws-config/environment`
+- Clones the configured Git repo and branch
+- Loads and validates the referenced config JSON
+- (Currently performs dry run; deploy logic can be extended)
 
-### **3️⃣ Syncing Configurations to AWS Parameter Store**
-To make JSON configurations available to Terraform, run:
-```sh
-./scripts/sync-to-aws.sh
+## Roles and Separation of Responsibility
+
+This system is designed to enforce strict separation between:
+
+- **Defining an environment** — done once per account by administrators
+- **Deploying a config** — done routinely by developers, CI/CD, or automation tools
+
+Environment binding must be declared before any deployment is possible, and cannot be overwritten accidentally. This protects production environments while enabling flexibility in development.
+
+## Validation Scripts
+
+These help verify correct setup before attempting deployment.
+
+### Validate the environment parameter
+
+```bash
+python3 scripts/validate_account_environment.py
 ```
-This script:
-✅ Pushes all JSON configs to AWS Parameter Store  
-✅ Ensures Parameter Store stays **in sync with the latest Git commits**  
-✅ Enforces **deployment security** by preventing unauthorized infrastructure changes  
 
----
+- Loads the current value of `/aws-config/environment` from the AWS account
+- Determines the environment name from the `name` field
+- Compares it to `account_environments/<name>.json`
 
-## **📖 Example: Defining a VPC**
-### **1️⃣ Create a JSON Config File**
-To define a VPC, create `/vpc/main-vpc.json`:
-```json
-{
-  "vpc_cidr": "10.0.0.0/16",
-  "enable_dns_support": true,
-  "private_subnet_cidrs": ["10.0.1.0/24", "10.0.2.0/24"]
-}
+### Validate a config instance
+
+```bash
+python3 scripts/validate_config.py --config serverless-site/strall-com
 ```
-Commit and push this change to Git.
 
-### **2️⃣ Sync to AWS Parameter Store**
-```sh
-./scripts/sync-to-aws.sh
-```
-This pushes `/aws/vpc/main-vpc/config` to AWS Parameter Store.
+Checks that the referenced config exists and is valid JSON.
 
-### **3️⃣ Terraform Validates Before Deployment**
-Terraform checks AWS Parameter Store before proceeding:
-```sh
-terraform apply -var="nickname=main-vpc"
-```
-✅ If `/aws/vpc/main-vpc/config` exists, Terraform deploys.  
-❌ If not, Terraform **fails**, ensuring **only approved infrastructure gets built**.
+## Security and Governance
 
----
+- All deployments are gated by the `/aws-config/environment` parameter
+- This parameter is protected by a resource policy and can only be written by an admin role
+- Environment validation and config deployment are separate, scriptable processes
+- No configuration is applied unless committed to Git and declared under an approved environment
 
-## **🔄 Supporting Multiple Environments & Feature Branches**
-Because each deployment is **defined by a simple JSON file**, you can:
-- **Deploy multiple versions side by side** (`main`, `feature-x`, `staging`).
-- **Update infrastructure via Git commits**, rather than manual Terraform edits.
-- **Easily track changes** – every deployment change is stored in version control.
+## Customization
 
----
+- Fork this repository to define your own environments and constraints
+- Update `account_environments/` to define new OUs and controls
+- Create new deployable configs under `aws-config/dev/` or `aws-config/prod/`
 
-## **🔐 Security & Compliance**
-✅ **Full Auditability** – Every deployment change is tracked in Git.  
-✅ **Prevents unauthorized changes** – Only **approved config updates** affect AWS infrastructure.  
-✅ **Access Control via IAM** – Only **authorized users can sync configs to AWS Parameter Store**.  
+## License
 
----
-
-## 🧠 Project Background
-
-This repository is part of a broader open-source architecture I’ve developed to support configuration-driven AWS deployment.
-
-While some of these ideas were shaped through years of professional experience and refinement, the implementations here are entirely original — built independently and outside the context of any prior employment.
-
-For the full context and design principles behind this system, see the [aws-deployment-guide](https://github.com/tstrall/aws-deployment-guide).
-
----
-
-## **📌 Next Steps**
-Want to implement this in your AWS environment? Here’s what to do next:  
-1️⃣ **Fork this repo and define your own configurations.**  
-2️⃣ **Use the sync script to push configs to AWS Parameter Store.**  
-3️⃣ **Deploy infrastructure using the [`aws-iac`](https://github.com/your-username/aws-iac) Terraform repo.**  
-
-📩 **Questions? Reach out or contribute!**  
-This is an open-source approach, and improvements are always welcome.  
-
----
-
-📢 **Like this approach? Star the repo and follow for updates!** 🚀  
+[Apache 2.0 License](LICENSE)
