@@ -5,6 +5,12 @@ This is the only part of the **AWS deployment framework designed to be forked an
 
 This repo is designed to declare everything that can be deployed — but actual deployment is controlled separately.
 
+
+It works together with:
+- [`aws-deployment-guide`](https://github.com/tstrall/aws-deployment-guide) for orchestration and walkthroughs
+- [`aws-iac`](https://github.com/tstrall/aws-iac) for shared Terraform-based infrastructure components
+- [`aws-lambda`](https://github.com/tstrall/aws-lambda) for optional Lambda handlers and tools
+
 ## Repository Structure
 
 ```
@@ -72,12 +78,6 @@ This two-step process ensures that:
 - Control over this repository — and how it is published to AWS — defines the allowed architecture for your environment
 
 In other words: this repo sets the rules, but AWS Parameter Store enforces them.
-
-
-It works together with:
-- [`aws-deployment-guide`](https://github.com/tstrall/aws-deployment-guide) for orchestration and walkthroughs
-- [`aws-iac`](https://github.com/tstrall/aws-iac) for shared Terraform-based infrastructure components
-- [`aws-lambda`](https://github.com/tstrall/aws-lambda) for optional Lambda handlers and tools
 
 Each AWS account is explicitly bound to one environment by setting a single JSON parameter in AWS Systems Manager: `/aws-config/environment`. All other configuration is defined declaratively under this repo and selected at runtime based on that binding.
 
