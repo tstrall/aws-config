@@ -3,14 +3,7 @@
 This is the only part of the **AWS deployment framework designed to be forked and modified.**  
 **You control it, and your fork does not need to be public.**
 
-This repository contains the configuration that defines how each AWS account in your organization is bound to its environment (e.g., `dev`, `prod`) and what may be deployed there.
-
-It works together with:
-- [`aws-deployment-guide`](https://github.com/tstrall/aws-deployment-guide) for orchestration and walkthroughs
-- [`aws-iac`](https://github.com/tstrall/aws-iac) for shared Terraform-based infrastructure components
-- [`aws-lambda`](https://github.com/tstrall/aws-lambda) for optional Lambda handlers and tools
-
-Each AWS account is explicitly bound to one environment by setting a single JSON parameter in AWS Systems Manager: `/aws-config/environment`. All other configuration is defined declaratively under this repo and selected at runtime based on that binding.
+This repo is designed to declare everything that can be deployed — but actual deployment is controlled separately.
 
 ## Repository Structure
 
@@ -66,6 +59,27 @@ python3 scripts/define_account_environment.py --env dev
 - Automatically applies a restrictive IAM policy to prevent unauthorized changes
 
 Only the designated administrative role (e.g. `OrgAdmin`) will be allowed to modify or delete the parameter. All other roles, including account root, will be denied.
+
+## How Configuration Becomes Active
+
+This repository defines configuration that can be deployed — but it is not automatically active.  
+Only values that are explicitly published to AWS Systems Manager Parameter Store (via approved scripts or manual steps) will be used at deploy time.
+
+This two-step process ensures that:
+
+- You can version and review changes in Git before applying them
+- Only declared environments and components can be deployed
+- Control over this repository — and how it is published to AWS — defines the allowed architecture for your environment
+
+In other words: this repo sets the rules, but AWS Parameter Store enforces them.
+
+
+It works together with:
+- [`aws-deployment-guide`](https://github.com/tstrall/aws-deployment-guide) for orchestration and walkthroughs
+- [`aws-iac`](https://github.com/tstrall/aws-iac) for shared Terraform-based infrastructure components
+- [`aws-lambda`](https://github.com/tstrall/aws-lambda) for optional Lambda handlers and tools
+
+Each AWS account is explicitly bound to one environment by setting a single JSON parameter in AWS Systems Manager: `/aws-config/environment`. All other configuration is defined declaratively under this repo and selected at runtime based on that binding.
 
 ## Deploying a Config Instance
 
