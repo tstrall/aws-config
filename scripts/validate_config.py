@@ -8,7 +8,7 @@ import boto3
 import pathlib
 import sys
 
-def get_environment_config(param_name="/aws-config/environment"):
+def get_environment_config(param_name="/iac-config/environment"):
     ssm = boto3.client("ssm")
     try:
         param = ssm.get_parameter(Name=param_name, WithDecryption=False)
@@ -39,7 +39,7 @@ def validate_config_exists(repo_path, env, config_path):
 def main():
     parser = argparse.ArgumentParser(description="Validate config instance exists and is readable.")
     parser.add_argument("--config", required=True, help="Path to config instance (e.g. serverless-site/strall-com)")
-    parser.add_argument("--param-name", default="/aws-config/environment", help="SSM parameter name with environment info")
+    parser.add_argument("--param-name", default="/iac-config/environment", help="SSM parameter name with environment info")
     args = parser.parse_args()
 
     env_config = get_environment_config(args.param_name)

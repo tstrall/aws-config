@@ -18,7 +18,7 @@ def get_identity():
         "arn": ident["Arn"]
     }
 
-def get_environment_config(param_name="/aws-config/environment", required=True):
+def get_environment_config(param_name="/iac-config/environment", required=True):
     ssm = boto3.client('ssm')
     try:
         response = ssm.get_parameter(Name=param_name, WithDecryption=False)
@@ -56,7 +56,7 @@ def deploy_config(config):
 def main():
     parser = argparse.ArgumentParser(description="Deploy a config instance defined in aws-config.")
     parser.add_argument("--config", required=True, help="Path to the config instance (e.g. serverless-site/strall-com)")
-    parser.add_argument("--config-param", default="/aws-config/environment", help="SSM parameter name for environment binding")
+    parser.add_argument("--config-param", default="/iac-config/environment", help="SSM parameter name for environment binding")
     parser.add_argument("--override-config-repo", help="Optional override for config repo")
     parser.add_argument("--override-config-branch", help="Optional override for config branch")
     parser.add_argument("--require-param", action="store_true", default=True, help="Fail if config param is missing (default: true)")

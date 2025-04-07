@@ -10,7 +10,7 @@ def load_local_env(path):
     with open(path, 'r') as f:
         return json.load(f)
 
-def get_remote_env(param_name="/aws-config/environment"):
+def get_remote_env(param_name="/iac-config/environment"):
     ssm = boto3.client("ssm")
     response = ssm.get_parameter(Name=param_name, WithDecryption=False)
     return json.loads(response['Parameter']['Value'])
@@ -26,7 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description="Validate that the live environment param matches the expected local JSON.")
     parser.add_argument("--env", required=True, help="Name of the environment (e.g. dev, prod)")
     parser.add_argument("--path", default="account_environments", help="Directory where local JSON files are stored")
-    parser.add_argument("--param-name", default="/aws-config/environment", help="SSM parameter name to validate")
+    parser.add_argument("--param-name", default="/iac-config/environment", help="SSM parameter name to validate")
     args = parser.parse_args()
 
     local_path = pathlib.Path(args.path) / f"{args.env}.json"
