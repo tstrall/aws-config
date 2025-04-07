@@ -134,7 +134,39 @@ Checks that the referenced config exists and is valid JSON.
 
 - Fork this repository to define your own environments and constraints
 - Update `account_environments/` to define new OUs and controls
-- Create new deployable configs under `/iac-config/dev/` or `/iac-config/prod/`
+- Create new deployable configs under `iac-config/dev/` or `iac-config/prod/`
+
+## Developer Setup: AWS CLI Profiles
+
+This project assumes you are using named AWS CLI profiles to authenticate into different AWS accounts.
+
+To set up a profile for a core account (e.g. `dev-core` or `prod-core`), you can use either IAM access keys or SSO.
+
+### Option 1: Configure a profile using access keys
+
+```bash
+aws configure --profile dev-core
+```
+
+Follow the prompts to enter your access key, secret, and region (usually `us-east-1`).
+
+### Option 2: Configure a profile using SSO (AWS IAM Identity Center)
+
+```bash
+aws configure sso --profile dev-core
+```
+
+This requires you to know your SSO start URL and role name.
+
+---
+
+Once a profile is configured, you can run framework scripts with:
+
+```bash
+AWS_PROFILE=dev-core python scripts/define_account_environment.py --env dev
+```
+
+Each script supports `AWS_PROFILE` to target the appropriate account securely and explicitly.
 
 ## License
 
