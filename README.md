@@ -42,12 +42,6 @@ This project assumes you are using named AWS CLI profiles to authenticate into d
 To get started, follow the official guide:  
 https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 
-Once a profile is configured, you can run framework scripts like:
-
-```bash
-AWS_PROFILE=dev-iac python scripts/define_account_environment.py --env dev
-```
-
 Each script supports `AWS_PROFILE` to target the appropriate account securely and explicitly.
 
 ---

@@ -1,49 +1,39 @@
 #!/usr/bin/env python3
 
-import json
 import argparse
+import json
 import boto3
 import pathlib
 import sys
 
-def load_local_env(path):
-    with open(path, 'r') as f:
-        return json.load(f)
-
-def get_remote_env(param_name="/iac-config/environment"):
+def fetch_param(param_name="/iac/environment"):
     ssm = boto3.client("ssm")
-    response = ssm.get_parameter(Name=param_name, WithDecryption=False)
-    return json.loads(response['Parameter']['Value'])
-
-def compare(expected, actual):
-    mismatches = []
-    for key in expected:
-        if expected[key] != actual.get(key):
-            mismatches.append((key, expected[key], actual.get(key)))
-    return mismatches
+    result = ssm.get_parameter(Name=param_name, WithDecryption=False)
+    return json.loads(result["Parameter"]["Value"])
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate that the live environment param matches the expected local JSON.")
-    parser.add_argument("--env", required=True, help="Name of the environment (e.g. dev, prod)")
-    parser.add_argument("--path", default="account_environments", help="Directory where local JSON files are stored")
-    parser.add_argument("--param-name", default="/iac-config/environment", help="SSM parameter name to validate")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--env", help="Expected environment name (e.g. dev)")
+    parser.add_argument("--param-name", default="/iac/environment", help="Parameter Store path")
     args = parser.parse_args()
 
-    local_path = pathlib.Path(args.path) / f"{args.env}.json"
-    if not local_path.exists():
-        print(f"❌ Local file not found: {local_path}")
+    live = fetch_param(args.param_name)
+    env_name = args.env or live.get("name")
+
+    expected_path = pathlib.Path("account_environments") / f"{env_name}.json"
+    if not expected_path.exists():
+        print(f"Missing local file: {expected_path}")
         sys.exit(1)
 
-    expected = load_local_env(local_path)
-    actual = get_remote_env(args.param_name)
+    with open(expected_path) as f:
+        expected = json.load(f)
 
-    mismatches = compare(expected, actual)
-    if not mismatches:
-        print("✅ Environment parameter matches local JSON.")
+    if live == expected:
+        print("✅ Environment parameter matches local file.")
     else:
-        print("❌ Mismatch detected:")
-        for key, exp, act in mismatches:
-            print(f" - {key}: expected {exp}, got {act}")
+        print("❌ Mismatch between environment parameter and local file.")
+        print("Live value:", json.dumps(live, indent=2))
+        print("Expected: ", json.dumps(expected, indent=2))
         sys.exit(1)
 
 if __name__ == "__main__":
