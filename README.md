@@ -39,33 +39,10 @@ It works together with:
 
 This project assumes you are using named AWS CLI profiles to authenticate into different AWS accounts.
 
-To get started, follow the official guide:  
-https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
-
 Each script supports `AWS_PROFILE` to target the appropriate account securely and explicitly.
 
----
-
-## Environment Setup
-
-Each AWS account must define its environment binding before any configuration can be deployed. This is done by writing the `/iac/environment` parameter to Systems Manager Parameter Store using the provided script.
-
-Each file in `account_environments/` corresponds to an environment (mapped to an Organizational Unit) and defines how accounts within that environment should be configured and constrained.
-
-### Define the Environment Parameter
-
-To define the environment parameter from the CLI:
-
-```bash
-AWS_PROFILE=dev-iac python scripts/define_account_environment.py --env dev
-AWS_PROFILE=prod-iac python scripts/define_account_environment.py --env prod
-```
-
-- Loads from `account_environments/<env>.json`
-- Writes to `/iac/environment` in the target AWS account
-- Uses the Standard parameter tier by default
-
-Once this parameter exists, it becomes the source of truth for what config and infrastructure the account is allowed to use.
+To get started, follow the official guide:  
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 
 ---
 
@@ -96,6 +73,29 @@ AWS_PROFILE=dev-iac python scripts/deploy_config.py --config serverless-site/str
 - Clones the configured Git repo and branch
 - Loads and validates the referenced config JSON
 - (Currently performs dry run; deploy logic can be extended)
+
+---
+
+## Environment Setup
+
+Each AWS account must define its environment binding before any configuration can be deployed. This is done by writing the `/iac/environment` parameter to Systems Manager Parameter Store using the provided script.
+
+Each file in `account_environments/` corresponds to an environment (mapped to an Organizational Unit) and defines how accounts within that environment should be configured and constrained.
+
+### Define the Environment Parameter
+
+To define the environment parameter from the CLI:
+
+```bash
+AWS_PROFILE=dev-iac python scripts/define_account_environment.py --env dev
+AWS_PROFILE=prod-iac python scripts/define_account_environment.py --env prod
+```
+
+- Loads from `account_environments/<env>.json`
+- Writes to `/iac/environment` in the target AWS account
+- Uses the Standard parameter tier by default
+
+Once this parameter exists, it becomes the source of truth for what config and infrastructure the account is allowed to use.
 
 ---
 
