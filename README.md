@@ -39,10 +39,17 @@ It works together with:
 
 This project assumes you are using named AWS CLI profiles to authenticate into different AWS accounts.
 
-Each script supports `AWS_PROFILE` to target the appropriate account securely and explicitly.
+Each script supports the `AWS_PROFILE` environment variable to explicitly target the correct account. If not set, scripts will default to the AWS CLI's currently active credentials.
 
-To get started, follow the official guide:  
-https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+To get started:
+
+➡️ [See `setup/bash-aws-profile-prompt.md`](./setup/bash-aws-profile-prompt.md) for a quick explanation of:
+
+- How to authenticate with `aws sso login`
+- How to switch accounts using `AWS_PROFILE`
+- How to update your terminal prompt and title to show your current profile
+
+This small improvement reduces the chance of deploying to the wrong account and works well for both ad-hoc and CI/CD workflows.
 
 ---
 
