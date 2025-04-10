@@ -1,0 +1,23 @@
+{
+  "zone_name": "strall.com.",
+  "comment": "Root hosted zone for strall.com",
+  "root_records": {
+    "MX": [
+      "10 mx1.improvmx.com.",
+      "20 mx2.improvmx.com."
+    ],
+    "TXT": [
+      "\"v=spf1 include:improvmx.com ~all\""
+    ],
+    "TXT_CUSTOM": {
+      "_dmarc": "\"v=DMARC1; p=none; rua=mailto:postmaster@strall.com\""
+    },
+    "CNAME": {
+      "www": "strall.com"
+    }
+  },
+  "tags": {
+    "Project": "route53",
+    "Environment": "prod"
+  }
+}

@@ -1,16 +1,15 @@
 {
-    "site_name": "strall.com",
-    "domain_aliases": ["www.strall.com"],
-    "content_bucket_prefix": "strall-com-prod-site",
-    "cloudfront_comment": "Static site for strall.com (prod)",
-    "error_document": "404.html",
-    "index_document": "index.html",
-    "acm_certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-ef56-7890-gh12-ijklmnopqrst",
-    "route53_zone_name": "strall.com.",
-    "tags": {
-      "Environment": "prod",
-      "Project": "serverless-site",
-      "Owner": "strall"
-    }
+  "site_name": "strall.com",
+  "content_bucket_prefix": "strall-com-prod-site",
+  "cloudfront_comment": "Static site for strall.com (prod)",
+  "index_document": "index.html",
+  "error_document": "404.html",
+  "enable_custom_domain": true,
+  "domain_aliases": ["strall.com", "www.strall.com"],
+  "route53_zone_name": "strall.com.",
+  "tags": {
+    "Environment": "prod",
+    "Project": "serverless-site",
+    "Owner": "strall"
   }
-  
+}
