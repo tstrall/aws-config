@@ -9,9 +9,6 @@
     "TXT": ["v=spf1 include:improvmx.com ~all"],
     "TXT_CUSTOM": {
       "_dmarc": "v=DMARC1; p=none; rua=mailto:postmaster@strall.com"
-    },
-    "CNAME": {
-      "www": "strall.com"
     }
   },
   "tags": {
