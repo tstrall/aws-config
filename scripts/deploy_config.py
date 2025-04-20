@@ -5,9 +5,11 @@ import json
 import pathlib
 import boto3
 import sys
+import os
 
+get_prefix = lambda: os.getenv("IAC_PREFIX", "/iac")
 
-def get_current_environment(param_name="/iac/environment"):
+def get_current_environment(param_name=f"{get_prefix()}/environment"):
     ssm = boto3.client("ssm")
     try:
         response = ssm.get_parameter(Name=param_name, WithDecryption=False)
@@ -49,7 +51,7 @@ def main():
     args = parser.parse_args()
 
     env = get_current_environment()
-    param_name = f"/iac/{args.component}/{args.nickname}/config"
+    param_name = ff"{get_prefix()}/{args.component}/{args.nickname}/config"
     config = load_config(env, args.component, args.nickname)
     write_param(param_name, config)
 

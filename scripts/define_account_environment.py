@@ -5,12 +5,15 @@ import json
 import pathlib
 import boto3
 import sys
+import os
+
+get_prefix = lambda: os.getenv("IAC_PREFIX", "/iac")
 
 def load_environment_config(file_path):
     with open(file_path, "r") as f:
         return json.load(f)
 
-def write_environment_param(env_dict, param_name="/iac/environment"):
+def write_environment_param(env_dict, param_name=f"{get_prefix()}/environment"):
     ssm = boto3.client("ssm")
     print(f"Writing parameter {param_name} to SSM Parameter Store...")
     ssm.put_parameter(
@@ -26,7 +29,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", required=True, help="Environment name (e.g. dev, prod)")
     parser.add_argument("--path", default="account_environments", help="Path to environment files")
-    parser.add_argument("--param-name", default="/iac/environment", help="Parameter Store name to write")
+    parser.add_argument("--param-name", default=f"{get_prefix()}/environment", help="Parameter Store name to write")
     args = parser.parse_args()
 
     file_path = pathlib.Path(args.path) / f"{args.env}.json"

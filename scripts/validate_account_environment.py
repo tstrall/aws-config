@@ -5,8 +5,11 @@ import json
 import boto3
 import pathlib
 import sys
+import os
 
-def fetch_param(param_name="/iac/environment"):
+get_prefix = lambda: os.getenv("IAC_PREFIX", "/iac")
+
+def fetch_param(param_name=f"{get_prefix()}/environment"):
     ssm = boto3.client("ssm")
     result = ssm.get_parameter(Name=param_name, WithDecryption=False)
     return json.loads(result["Parameter"]["Value"])
@@ -14,7 +17,7 @@ def fetch_param(param_name="/iac/environment"):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", help="Expected environment name (e.g. dev)")
-    parser.add_argument("--param-name", default="/iac/environment", help="Parameter Store path")
+    parser.add_argument("--param-name", default=f"{get_prefix()}/environment", help="Parameter Store path")
     args = parser.parse_args()
 
     live = fetch_param(args.param_name)
