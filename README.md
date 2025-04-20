@@ -3,16 +3,16 @@
 This is the only part of the **AWS deployment framework designed to be forked and modified.**  
 **You control it, and your fork does not need to be public.**
 
-For a complete overview, see [Adage: AWS Deployment Framework](https://github.com/tstrall/adage).
+For a complete overview, see [Adage: AWS Deployment Framework](https://github.com/usekarma/adage).
 
 This repo is designed to declare everything that can be deployed — but actual deployment is controlled separately.
 
 It works together with:
-For a complete overview, see [Adage: AWS Deployment Framework](https://github.com/tstrall/adage).
+For a complete overview, see [Adage: AWS Deployment Framework](https://github.com/usekarma/adage).
 
-- [Adage: AWS Deployment Framework](https://github.com/tstrall/adage) for orchestration and walkthroughs
-- [`aws-iac`](https://github.com/tstrall/aws-iac) for shared Terraform-based infrastructure components
-- [`aws-lambda`](https://github.com/tstrall/aws-lambda) for optional Lambda handlers and tools
+- [Adage: AWS Deployment Framework](https://github.com/usekarma/adage) for orchestration and walkthroughs
+- [`aws-iac`](https://github.com/usekarma/aws-iac) for shared Terraform-based infrastructure components
+- [`aws-lambda`](https://github.com/usekarma/aws-lambda) for optional Lambda handlers and tools
 
 ---
 

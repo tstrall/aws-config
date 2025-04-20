@@ -1,10 +1,10 @@
 {
     "name": "prod",
-    "config_repo": "https://github.com/tstrall/aws-config.git",
+    "config_repo": "https://github.com/usekarma/aws-config.git",
     "config_branch": "main",
-    "iac_repo": "https://github.com/tstrall/aws-iac.git",
+    "iac_repo": "https://github.com/usekarma/aws-iac.git",
     "iac_strict": "true",
-    "lambda_repo": "https://github.com/tstrall/aws-lambda.git",
+    "lambda_repo": "https://github.com/usekarma/aws-lambda.git",
     "lambda_strict": "true"
   }
   
