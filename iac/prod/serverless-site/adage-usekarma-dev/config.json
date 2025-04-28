@@ -1,0 +1,15 @@
+{
+  "site_name": "adage.usekarma.dev",
+  "content_bucket_prefix": "adage-karma-dev-prod-site",
+  "cloudfront_comment": "Static site for adage.usekarma.dev (prod)",
+  "index_document": "index.html",
+  "error_document": "404.html",
+  "enable_custom_domain": true,
+  "domain_aliases": ["adage.usekarma.dev"],
+  "route53_zone_name": "usekarma.dev.",
+  "tags": {
+    "Environment": "prod",
+    "Project": "serverless-site",
+    "Owner": "usekarma"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "strall-com-dev",
+  "environment": "dev",
+  "config_repo": "https://github.com/usekarma/aws-config.git",
+  "config_branch": "dev",
+  "iac_repo": "https://github.com/usekarma/aws-iac.git",
+  "iac_branch": "dev",
+  "iac_strict": false,
+  "lambda_repo": "https://github.com/usekarma/aws-lambda.git",
+  "lambda_branch": "dev",
+  "lambda_strict": false,
+  "allow_drift": false
+}

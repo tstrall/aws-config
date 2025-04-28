@@ -1,0 +1,18 @@
+{
+  "zone_name": "usekarma.dev.",
+  "comment": "Root hosted zone for usekarma.dev",
+  "root_records": {
+    "MX": [
+      "10 mx1.improvmx.com.",
+      "20 mx2.improvmx.com."
+    ],
+    "TXT": ["v=spf1 include:improvmx.com ~all"],
+    "TXT_CUSTOM": {
+      "_dmarc": "v=DMARC1; p=none; rua=mailto:postmaster@usekarma.dev"
+    }
+  },
+  "tags": {
+    "Project": "route53",
+    "Environment": "prod"
+  }
+}

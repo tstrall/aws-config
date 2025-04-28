@@ -1,0 +1,11 @@
+{
+    "api_name": "karma-api",
+    "stage_name": "v1",
+    "openapi_definition": <<OpenAPI JSON or stringified JSON>>,
+    "lambda_integrations": {
+      "hello": "arn:aws:lambda:us-east-1:123456789012:function:hello-handler"
+    },
+    "domain_name": "api.example.com",
+    "route53_zone_name": "example.com"
+  }
+  
