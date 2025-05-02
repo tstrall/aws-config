@@ -1,0 +1,12 @@
+{
+  "api_name": "demo-api",
+  "stage_name": "v1",
+  "openapi": "demo-api",
+  "enable_custom_domain": true,
+  "domain_name": "demo-api.usekarma.dev",
+  "route53_zone_name": "usekarma.dev",
+  "tags": {
+    "Project": "adage",
+    "Owner": "usekarma"
+  }
+}
