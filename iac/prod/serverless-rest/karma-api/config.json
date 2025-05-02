@@ -1,0 +1,12 @@
+{
+  "api_name": "karma-api",
+  "stage_name": "v1",
+  "openapi": "karma-api",
+  "enable_custom_domain": true,
+  "domain_name": "karma-api.usekarma.dev",
+  "route53_zone_name": "usekarma.dev",
+  "tags": {
+    "Project": "karma",
+    "Owner": "usekarma"
+  }
+}

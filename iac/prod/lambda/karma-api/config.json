@@ -1,0 +1,20 @@
+{
+    "functions": {
+      "karma-log-handler": {
+        "runtime": "python3.10",
+        "handler": "main.handler",
+        "memory_size": 128,
+        "timeout": 10
+      },
+      "karma-graph-query": {
+        "runtime": "python3.10",
+        "handler": "main.handler",
+        "memory_size": 128,
+        "timeout": 10
+      }
+    },
+    "tags": {
+      "Project": "karma"
+    }
+  }
+  
